@@ -30,7 +30,8 @@ class Stopwatch extends Component{
         status: false,
         runningTime: 0,
         min: 0,
-        sec: 0
+        sec: 0,
+        ms: 0
     };
     handleClick = () => {
         this.setState(state => {
@@ -39,11 +40,12 @@ class Stopwatch extends Component{
             } else {
                 const startTime = Date.now() - this.state.runningTime;
                 this.timer = setInterval(() => {
-                    let time = Date.now() - startTime;
+                    let time = new Date(Date.now() - startTime);
                     this.setState({
                         runningTime: Date.now() - startTime,
-                        min: Math.floor((time/1000/60) << 0),
-                        sec: Math.floor((time/1000) % 60)
+                        min: time.getMinutes(),
+                        sec: time.getSeconds(),
+                        ms: time.getMilliseconds()
                     });
                 });
             }
@@ -55,11 +57,11 @@ class Stopwatch extends Component{
         this.setState({runningTime: 0, min: 0, sec: 0, running: false});
     };
     render(){
-        const {status, runningTime, min, sec} = this.state;
+        const {status, runningTime, min, sec, ms} = this.state;
         return (
             <div tabIndex={0} onKeyDown={this.handleClick}>
                 <p>{runningTime}ms</p>
-                <p>{min}min {sec}s</p>
+                <p>{min}min {sec}s {ms}ms</p>
                 <button>{status ? 'Stop' : 'Start'}</button>
                 <button onClick={this.handleReset}>Reset</button>
             </div>
