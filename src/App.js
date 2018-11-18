@@ -12,11 +12,26 @@ class App extends Component {
     }
 }
 
+class Driver {
+    times = [];
+    wasJoker = false;
+    constructor(numberOfLaps) {
+        this.times = Driver.initTimes(numberOfLaps)
+    }
+    static initTimes(numberOfLaps) {
+        let times = [];
+            for(let j=0; j<numberOfLaps; j++){
+                times.push(0);
+            }
+        return times;
+    }
+}
+
 
 class Stopwatch extends Component {
     config = {
         numbersOfPlayers: 4,
-        laps: 3
+        laps: 5
     };
     KEYS = {
         n1: 49,
@@ -51,10 +66,7 @@ class Stopwatch extends Component {
     initializePlayersTime() {
         let players = [];
         for(let i=0; i<this.config.numbersOfPlayers; i++){
-            players.push([]);
-            for(let j=0; j<this.config.laps; j++){
-                players[i].push(0);
-            }
+            players.push(new Driver(this.config.laps));
         }
         return players;
     };
@@ -117,14 +129,14 @@ class Stopwatch extends Component {
     renderPlayer = (data, id) => {
         return (
             <div key={id}>
-                <span>{id}: </span>{data.map(this.renderTime)}
+                <span>{id}: </span>{data.times.map(this.renderTime)}
             </div>
         );
     };
 
     renderTime = (data, id) => {
         return (
-            <span>{data ? data : "00:00:000"} </span>
+            <span key={'t'+id}>{data ? data : "00:00:000"} </span>
         );
     };
 
