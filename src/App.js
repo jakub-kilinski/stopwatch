@@ -14,16 +14,34 @@ class App extends Component {
 
 class Driver {
     times = [];
+    currentLap = 0;
     wasJoker = false;
+    startLapTime = 0;
+
     constructor(numberOfLaps) {
         this.times = Driver.initTimes(numberOfLaps)
     }
+
     static initTimes(numberOfLaps) {
         let times = [];
-            for(let j=0; j<numberOfLaps; j++){
-                times.push(0);
-            }
+        for (let j = 0; j < numberOfLaps; j++) {
+            times.push(0);
+        }
         return times;
+    }
+
+    increaseLapCounter() {
+        this.currentLap++;
+    }
+
+    putLapTime(lapTime) {
+        this.times[this.currentLap] = lapTime;
+        this.startLapTime = Date.now();
+        this.increaseLapCounter();
+    }
+
+    getStartLapTime() {
+        return this.startLapTime;
     }
 }
 
@@ -65,7 +83,7 @@ class Stopwatch extends Component {
 
     initializePlayersTime() {
         let players = [];
-        for(let i=0; i<this.config.numbersOfPlayers; i++){
+        for (let i = 0; i < this.config.numbersOfPlayers; i++) {
             players.push(new Driver(this.config.laps));
         }
         return players;
@@ -77,18 +95,26 @@ class Stopwatch extends Component {
                 clearInterval(this.timer);
             } else {
                 const startTime = Date.now() - this.state.runningTime;
+
                 this.timer = setInterval(() => {
                     let time = new Date(Date.now() - startTime);
                     this.setState({
-                        runningTime: Date.now() - startTime,
+                        startTime: startTime,
                         min: time.getMinutes(),
                         sec: time.getSeconds(),
-                        ms: time.getMilliseconds()
+                        ms: ('00' + time.getMilliseconds()).slice(-3)
                     });
                 });
             }
             return {isRunning: !state.isRunning};
         });
+    };
+    saveLapTime = (playerNumber) => {
+        let player = this.state.players[playerNumber];
+        let time = player.getStartLapTime()
+            ? new Date(Date.now() - player.getStartLapTime())
+            : new Date(Date.now() - this.state.startTime);
+        player.putLapTime(time);
     };
     recognizeKey = (event) => {
         let keyCode = event.keyCode;
@@ -96,13 +122,13 @@ class Stopwatch extends Component {
             console.log('space');
             this.runTimer();
         } else if (keyCode === this.KEYS.n1) {
-            console.log('1');
+            this.saveLapTime(0);
         } else if (keyCode === this.KEYS.n2) {
-            console.log('2');
+            this.saveLapTime(1);
         } else if (keyCode === this.KEYS.n3) {
-            console.log('3');
+            this.saveLapTime(2);
         } else if (keyCode === this.KEYS.n4) {
-            console.log('4');
+            this.saveLapTime(3);
         } else if (keyCode === this.KEYS.q) {
             console.log('q');
         } else if (keyCode === this.KEYS.w) {
@@ -118,7 +144,6 @@ class Stopwatch extends Component {
     handleReset = () => {
         clearInterval(this.timer);
         this.setState({
-            runningTime: 0,
             min: 0,
             sec: 0,
             ms: 0,
@@ -134,17 +159,25 @@ class Stopwatch extends Component {
         );
     };
 
+    renderPreetyTime(time) {
+        return (
+            <>
+                {('0' + time.getMinutes()).slice(-2)}:
+                {('0' + time.getSeconds()).slice(-2)}:
+                {('00' + time.getMilliseconds()).slice(-3)}
+            </>
+        );
+    };
     renderTime = (data, id) => {
         return (
-            <span key={'t'+id}>{data ? data : "00:00:000"} </span>
+            <span key={'t' + id}>{data ? this.renderPreetyTime(data) : "00:00:000"} </span>
         );
     };
 
     render() {
-        const {runningTime, min, sec, ms} = this.state;
+        const {min, sec, ms} = this.state;
         return (
             <div>
-                <p>{runningTime}ms</p>
                 <p>{min}min {sec}s {ms}ms</p>
                 <ul>
                     {this.state.players.map(this.renderPlayer)}
