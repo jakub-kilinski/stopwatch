@@ -100,8 +100,8 @@ class Stopwatch extends Component {
                     let time = new Date(Date.now() - startTime);
                     this.setState({
                         startTime: startTime,
-                        min: time.getMinutes(),
-                        sec: time.getSeconds(),
+                        min: ('0' + time.getMinutes()).slice(-2),
+                        sec: ('0' + time.getSeconds()).slice(-2),
                         ms: ('00' + time.getMilliseconds()).slice(-3)
                     });
                 });
@@ -147,7 +147,8 @@ class Stopwatch extends Component {
             min: 0,
             sec: 0,
             ms: 0,
-            isRunning: false
+            isRunning: false,
+            players: this.initializePlayersTime()
         });
     };
 
@@ -178,7 +179,7 @@ class Stopwatch extends Component {
         const {min, sec, ms} = this.state;
         return (
             <div>
-                <p>{min}min {sec}s {ms}ms</p>
+                <p>{min ? min : '00'}min {sec ? sec : '00'}s {ms ? ms : '000'}ms</p>
                 <ul>
                     {this.state.players.map(this.renderPlayer)}
                 </ul>
