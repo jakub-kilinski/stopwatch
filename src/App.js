@@ -69,6 +69,7 @@ class Stopwatch extends Component {
         this.state = {
             players: this.initializePlayersTime(),
             isRunning: false,
+            startTime: 0,
             runningTime: 0,
             min: 0,
             sec: 0,
@@ -100,6 +101,7 @@ class Stopwatch extends Component {
                     let time = new Date(Date.now() - startTime);
                     this.setState({
                         startTime: startTime,
+                        runningTime: Date.now() - startTime,
                         min: ('0' + time.getMinutes()).slice(-2),
                         sec: ('0' + time.getSeconds()).slice(-2),
                         ms: ('00' + time.getMilliseconds()).slice(-3)
@@ -121,24 +123,27 @@ class Stopwatch extends Component {
         if (keyCode === this.KEYS.space) {
             console.log('space');
             this.runTimer();
-        } else if (keyCode === this.KEYS.n1) {
-            this.saveLapTime(0);
-        } else if (keyCode === this.KEYS.n2) {
-            this.saveLapTime(1);
-        } else if (keyCode === this.KEYS.n3) {
-            this.saveLapTime(2);
-        } else if (keyCode === this.KEYS.n4) {
-            this.saveLapTime(3);
-        } else if (keyCode === this.KEYS.q) {
-            console.log('q');
-        } else if (keyCode === this.KEYS.w) {
-            console.log('w');
-        } else if (keyCode === this.KEYS.e) {
-            console.log('e');
-        } else if (keyCode === this.KEYS.r) {
-            console.log('r');
         } else if (keyCode === this.KEYS.x) {
             this.handleReset();
+        }
+        if(this.state.isRunning){
+            if (keyCode === this.KEYS.n1) {
+                this.saveLapTime(0);
+            } else if (keyCode === this.KEYS.n2) {
+                this.saveLapTime(1);
+            } else if (keyCode === this.KEYS.n3) {
+                this.saveLapTime(2);
+            } else if (keyCode === this.KEYS.n4) {
+                this.saveLapTime(3);
+            } else if (keyCode === this.KEYS.q) {
+                console.log('q');
+            } else if (keyCode === this.KEYS.w) {
+                console.log('w');
+            } else if (keyCode === this.KEYS.e) {
+                console.log('e');
+            } else if (keyCode === this.KEYS.r) {
+                console.log('r');
+            }
         }
     };
     handleReset = () => {
@@ -148,6 +153,8 @@ class Stopwatch extends Component {
             sec: 0,
             ms: 0,
             isRunning: false,
+            startTime: 0,
+            runningTime: 0,
             players: this.initializePlayersTime()
         });
     };
