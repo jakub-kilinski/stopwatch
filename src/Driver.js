@@ -3,6 +3,7 @@ class Driver {
     currentLap = 0;
     joker = false;
     startLapTime = 0;
+    finished = false;
 
     constructor(numberOfLaps) {
         this.times = Driver.initTimes(numberOfLaps)
@@ -36,6 +37,14 @@ class Driver {
 
     getJoker() {
         return this.joker;
+    }
+
+    setFinished() {
+       this.finished = true;
+    }
+
+    getFinished() {
+        return this.finished;
     }
 }
 

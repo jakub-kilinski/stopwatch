@@ -3,7 +3,7 @@ import Driver from './Driver';
 
 class Stopwatch extends Component {
     config = {
-        numbersOfPlayers: 4,
+        numbersOfDrivers: 4,
         laps: 5
     };
     KEYS = {
@@ -22,7 +22,7 @@ class Stopwatch extends Component {
     constructor() {
         super();
         this.state = {
-            players: this.initializePlayersTime(),
+            drivers: this.initializeDriversAndTimeTable(),
             isRunning: false,
             startTime: 0,
             runningTime: 0,
@@ -36,12 +36,12 @@ class Stopwatch extends Component {
         document.body.addEventListener('keydown', this.recognizeKey);
     };
 
-    initializePlayersTime() {
-        let players = [];
-        for (let i = 0; i < this.config.numbersOfPlayers; i++) {
-            players.push(new Driver(this.config.laps));
+    initializeDriversAndTimeTable() {
+        let driver = [];
+        for (let i = 0; i < this.config.numbersOfDrivers; i++) {
+            driver.push(new Driver(this.config.laps));
         }
-        return players;
+        return driver;
     };
 
     runTimer = () => {
@@ -65,23 +65,33 @@ class Stopwatch extends Component {
             return {isRunning: !state.isRunning};
         });
     };
-    saveLapTime = (playerNumber) => {
-        let player = this.state.players[playerNumber];
-        if(player.currentLap < this.config.laps){
-            let time = player.getStartLapTime()
-                ? new Date(Date.now() - player.getStartLapTime())
+    saveLapTime = (driverNumber) => {
+        let driver = this.state.drivers[driverNumber];
+        if(driver.currentLap < this.config.laps){
+            let time = driver.getStartLapTime()
+                ? new Date(Date.now() - driver.getStartLapTime())
                 : new Date(Date.now() - this.state.startTime);
-            player.putLapTime(time);
+            driver.putLapTime(time);
+        }
+        if (driver.currentLap === this.config.laps) {
+            driver.setFinished();
+        }
+        if (this.isFinished()) {
+            this.runTimer();
         }
     };
-    setJokerLap = (playerNumber) => {
-        let player = this.state.players[playerNumber];
-        player.setJoker();
+    isFinished(){
+        return this.state.drivers.every(function (element) {
+            return element.getFinished() === true;
+        });
+    }
+    setJokerLap = (driverNumber) => {
+        let driver = this.state.drivers[driverNumber];
+        driver.setJoker();
     };
     recognizeKey = (event) => {
         let keyCode = event.keyCode;
         if (keyCode === this.KEYS.start) {
-            console.log('start');
             this.runTimer();
         } else if (keyCode === this.KEYS.x) {
             this.handleReset();
@@ -116,12 +126,12 @@ class Stopwatch extends Component {
                 isRunning: false,
                 startTime: 0,
                 runningTime: 0,
-                players: this.initializePlayersTime()
+                drivers: this.initializeDriversAndTimeTable()
             });
         }
     };
 
-    renderPlayer = (data, id) => {
+    renderDriver = (data, id) => {
         return (
             <div key={id}>
                 <span>{id}: </span><span>joker: {data.getJoker().toString()} </span>{data.times.map(this.renderTime)}
@@ -151,7 +161,7 @@ class Stopwatch extends Component {
             <div>
                 <p>{min ? min : '00'}min {sec ? sec : '00'}s {ms ? ms : '000'}ms</p>
                 <ul>
-                    {this.state.players.map(this.renderPlayer)}
+                    {this.state.drivers.map(this.renderDriver)}
                 </ul>
             </div>
         );
