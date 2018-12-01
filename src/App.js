@@ -86,7 +86,6 @@ class Stopwatch extends Component {
     }
 
     componentDidMount() {
-        console.log('dupa');
         document.body.addEventListener('keydown', this.recognizeKey);
     };
 
@@ -121,10 +120,12 @@ class Stopwatch extends Component {
     };
     saveLapTime = (playerNumber) => {
         let player = this.state.players[playerNumber];
-        let time = player.getStartLapTime()
-            ? new Date(Date.now() - player.getStartLapTime())
-            : new Date(Date.now() - this.state.startTime);
-        player.putLapTime(time);
+        if(player.currentLap < this.config.laps){
+            let time = player.getStartLapTime()
+                ? new Date(Date.now() - player.getStartLapTime())
+                : new Date(Date.now() - this.state.startTime);
+            player.putLapTime(time);
+        }
     };
     setJokerLap = (playerNumber) => {
         let player = this.state.players[playerNumber];
