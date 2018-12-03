@@ -1,0 +1,38 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+}
+
+.container{
+    max-width: 1200px;
+    display:flex;
+    justify-content: center;
+}
+
+.mainTimer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.driver {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    .joker {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: #000000;
+        border-radius: 50%;
+        &.not-passed {
+            opacity: 0.2;
+        }
+        &.passed {
+            opacity: 1;
+        }
+    }
+    .singleTime{
+        margin: 5px;
+    }
+}
