@@ -12,7 +12,7 @@ class Driver {
     static initTimes(numberOfLaps) {
         let times = [];
         for (let j = 0; j < numberOfLaps; j++) {
-            times.push(0);
+            times.push({time: 0, best: false});
         }
         return times;
     }
@@ -22,7 +22,7 @@ class Driver {
     }
 
     putLapTime(lapTime) {
-        this.times[this.currentLap] = lapTime;
+        this.times[this.currentLap].time = lapTime;
         this.startLapTime = Date.now();
         this.increaseLapCounter();
     }

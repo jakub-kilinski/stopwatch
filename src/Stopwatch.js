@@ -4,7 +4,7 @@ import Driver from './Driver';
 class Stopwatch extends Component {
     config = {
         numbersOfDrivers: 4,
-        laps: 7
+        laps: 3
     };
     KEYS = {
         n1: 49,
@@ -29,7 +29,8 @@ class Stopwatch extends Component {
             runningTime: 0,
             min: 0,
             sec: 0,
-            ms: 0
+            ms: 0,
+            bestTime: 0
         }
     }
 
@@ -73,16 +74,37 @@ class Stopwatch extends Component {
                 ? new Date(Date.now() - driver.getStartLapTime())
                 : new Date(Date.now() - this.state.startTime);
             driver.putLapTime(time);
+            if (this.state.bestTime > time || this.state.bestTime === 0) {
+                this.setState({
+                    bestTime: time
+                });
+            }
         }
         if (driver.currentLap === this.config.laps) {
             driver.setFinished();
         }
         if (this.isFinished()) {
             this.runTimer();
+            this.showBestTime();
             this.setState({
                 finish: true
             });
         }
+    };
+
+    showBestTime() {
+        var bestTime = this.state.bestTime;
+
+        this.state.drivers.map(function(driver){
+            driver.times.map(function(time){
+                if(time.time === bestTime){
+                    time.best = true;
+                }
+                return time;
+            });
+            return driver;
+        });
+        console.log(this.state.drivers);
     };
 
     isFinished() {
@@ -133,7 +155,8 @@ class Stopwatch extends Component {
                 startTime: 0,
                 runningTime: 0,
                 drivers: this.initializeDriversAndTimeTable(),
-                finish: false
+                finish: false,
+                bestTime: 0
             });
         }
     };
@@ -151,7 +174,9 @@ class Stopwatch extends Component {
     renderDriver = (data, id) => {
         return (
             <tr key={id} className="driver">
-                <td>{++id}: </td><td>{this.renderJoker(data.getJoker())} </td>{data.times.map(this.renderTime)}
+                <td>{++id}.</td>
+                <td>{this.renderJoker(data.getJoker())} </td>
+                {data.times.map(this.renderTime)}
             </tr>
         );
     };
@@ -165,24 +190,33 @@ class Stopwatch extends Component {
     }
 
     renderPrettyTime = (time) => {
+        let clazzName = 'prettyTime' + (time.best ? " best" : "");
         return (
-            <>
-                {('0' + time.getMinutes()).slice(-2)}:
-                {('0' + time.getSeconds()).slice(-2)}:
-                {('00' + time.getMilliseconds()).slice(-3)}
-            </>
+            <span className={clazzName}>
+                {('0' + time.time.getMinutes()).slice(-2)}:
+                {('0' + time.time.getSeconds()).slice(-2)}:
+                {('00' + time.time.getMilliseconds()).slice(-3)}
+            </span>
         );
     };
     renderTime = (data, id) => {
         return (
-            <td key={'t' + id} className="singleTime">{data ? this.renderPrettyTime(data) : "00:00:000"} </td>
+            <td key={'t' + id} className="singleTime">{data.time ? this.renderPrettyTime(data) : this.renderTimePlaceholder()} </td>
+        );
+    };
+
+    renderTimePlaceholder() {
+        return (
+            <span className="timePlaceholder">
+                00:00:000
+            </span>
         );
     };
 
     renderLapHeader = () => {
         let table = [];
         for (let i = 0; i < this.config.laps; i++) {
-            table.push(<th>
+            table.push(<th className="timeHeader" key={'th' + i}>
                 okr. {i + 1}.
             </th>);
         }
@@ -191,6 +225,7 @@ class Stopwatch extends Component {
 
     render() {
         let statusMessage = this.getStatusMessage();
+        let statusMessageClass = 'statusMessage' + (this.state.finish ? '--finished' : "");
         const {min, sec, ms} = this.state;
         return (
             <div>
@@ -199,15 +234,18 @@ class Stopwatch extends Component {
                         <p>Czas główny</p>
                         <p>{min ? min : '00'}:{sec ? sec : '00'}:{ms ? ms : '000'}</p>
                     </div>
-                    <p className="statusMessage">{statusMessage}</p>
+                    <p className={statusMessageClass}>{statusMessage}</p>
                 </div>
                 <table className="driversList">
-                    <tr>
-                        <th>zawodnicy</th>
-                        <th>joker</th>
-                        {this.renderLapHeader()}
-                    </tr>
-                    {this.state.drivers.map(this.renderDriver)}
+                    <tbody>
+                        <tr>
+                            <th>zawodnicy</th>
+                            <th>joker</th>
+                            {this.renderLapHeader()}
+                        </tr>
+
+                        {this.state.drivers.map(this.renderDriver)}
+                    </tbody>
                 </table>
             </div>
         );

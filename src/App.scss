@@ -3,9 +3,9 @@ body {
     font-weight: 700;
 }
 
-.container{
+.container {
     max-width: 1200px;
-    display:flex;
+    display: flex;
     justify-content: center;
     margin: auto;
 }
@@ -14,12 +14,14 @@ body {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
+    .statusMessage{
+        &--finished{
+            color: #ff0000;
+        }
+    }
 }
 
 .driver {
-    //display: flex;
-    //align-items: flex-end;
-    //justify-content: center;
     .joker {
         display: inline-block;
         width: 20px;
@@ -33,19 +35,31 @@ body {
             opacity: 1;
         }
     }
+    .timePlaceholder{
+        opacity: 0.2;
+    }
+    .prettyTime{
+        &.best{
+            color: #27a527;
+        }
+    }
 }
+
 table {
     border-spacing: 0;
     text-align: left;
-}
-td {
-    border-bottom: 1px solid black;
-    padding: 5px;
-    .singleTime{
-        min-width: 100px;
+    td {
+        border-bottom: 1px solid black;
+        padding: 5px;
+        .singleTime {
+            min-width: 100px;
+        }
     }
-}
-th {
-    padding: 5px;
-    font-size: 10px;
+    th {
+        padding: 5px;
+        font-size: 10px;
+        &.timeHeader{
+            width:100px;
+        }
+    }
 }
