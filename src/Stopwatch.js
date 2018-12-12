@@ -4,7 +4,7 @@ import Driver from './Driver';
 class Stopwatch extends Component {
     config = {
         numbersOfDrivers: 4,
-        laps: 3
+        laps: 6
     };
     KEYS = {
         n1: 49,
@@ -104,7 +104,6 @@ class Stopwatch extends Component {
             });
             return driver;
         });
-        console.log(this.state.drivers);
     };
 
     isFinished() {
@@ -187,7 +186,7 @@ class Stopwatch extends Component {
             <i className={clazzName}>
             </i>
         );
-    }
+    };
 
     renderPrettyTime = (time) => {
         let clazzName = 'prettyTime' + (time.best ? " best" : "");
@@ -201,11 +200,11 @@ class Stopwatch extends Component {
     };
     renderTime = (data, id) => {
         return (
-            <td key={'t' + id} className="singleTime">{data.time ? this.renderPrettyTime(data) : this.renderTimePlaceholder()} </td>
+            <td key={'t' + id} className="singleTime">{data.time ? this.renderPrettyTime(data) : Stopwatch.renderTimePlaceholder()} </td>
         );
     };
 
-    renderTimePlaceholder() {
+    static renderTimePlaceholder() {
         return (
             <span className="timePlaceholder">
                 00:00:000
