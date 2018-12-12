@@ -7,6 +7,7 @@ body {
     max-width: 1200px;
     display:flex;
     justify-content: center;
+    margin: auto;
 }
 
 .mainTimer {
@@ -16,9 +17,9 @@ body {
 }
 
 .driver {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+    //display: flex;
+    //align-items: flex-end;
+    //justify-content: center;
     .joker {
         display: inline-block;
         width: 20px;
@@ -32,7 +33,19 @@ body {
             opacity: 1;
         }
     }
+}
+table {
+    border-spacing: 0;
+    text-align: left;
+}
+td {
+    border-bottom: 1px solid black;
+    padding: 5px;
     .singleTime{
-        margin: 5px;
+        min-width: 100px;
     }
+}
+th {
+    padding: 5px;
+    font-size: 10px;
 }

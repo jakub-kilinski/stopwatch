@@ -4,7 +4,7 @@ import Driver from './Driver';
 class Stopwatch extends Component {
     config = {
         numbersOfDrivers: 4,
-        laps: 5
+        laps: 7
     };
     KEYS = {
         n1: 49,
@@ -68,7 +68,7 @@ class Stopwatch extends Component {
     };
     saveLapTime = (driverNumber) => {
         let driver = this.state.drivers[driverNumber];
-        if(driver.currentLap < this.config.laps){
+        if (driver.currentLap < this.config.laps) {
             let time = driver.getStartLapTime()
                 ? new Date(Date.now() - driver.getStartLapTime())
                 : new Date(Date.now() - this.state.startTime);
@@ -84,44 +84,46 @@ class Stopwatch extends Component {
             });
         }
     };
-    isFinished(){
+
+    isFinished() {
         return this.state.drivers.every(function (element) {
             return element.getFinished() === true;
         });
     }
+
     setJokerLap = (driverNumber) => {
         let driver = this.state.drivers[driverNumber];
         driver.setJoker();
     };
     recognizeKey = (event) => {
         let keyCode = event.keyCode;
-        if (keyCode === this.KEYS.start) {
+        if (keyCode === this.KEYS.start && !this.state.finish) {
             this.runTimer();
         } else if (keyCode === this.KEYS.x) {
             this.handleReset();
         }
-        if(this.state.isRunning){
-            if (keyCode === this.KEYS.n1) {
+        if (this.state.isRunning && !this.state.finish) {
+            if (keyCode === this.KEYS.n1 && this.config.numbersOfDrivers >= 1) {
                 this.saveLapTime(0);
-            } else if (keyCode === this.KEYS.n2) {
+            } else if (keyCode === this.KEYS.n2 && this.config.numbersOfDrivers >= 2) {
                 this.saveLapTime(1);
-            } else if (keyCode === this.KEYS.n3) {
+            } else if (keyCode === this.KEYS.n3 && this.config.numbersOfDrivers >= 3) {
                 this.saveLapTime(2);
-            } else if (keyCode === this.KEYS.n4) {
+            } else if (keyCode === this.KEYS.n4 && this.config.numbersOfDrivers >= 4) {
                 this.saveLapTime(3);
-            } else if (keyCode === this.KEYS.q) {
+            } else if (keyCode === this.KEYS.q && this.config.numbersOfDrivers >= 1) {
                 this.setJokerLap(0);
-            } else if (keyCode === this.KEYS.w) {
+            } else if (keyCode === this.KEYS.w && this.config.numbersOfDrivers >= 2) {
                 this.setJokerLap(1);
-            } else if (keyCode === this.KEYS.e) {
+            } else if (keyCode === this.KEYS.e && this.config.numbersOfDrivers >= 3) {
                 this.setJokerLap(2);
-            } else if (keyCode === this.KEYS.r) {
+            } else if (keyCode === this.KEYS.r && this.config.numbersOfDrivers >= 4) {
                 this.setJokerLap(3);
             }
         }
     };
     handleReset = () => {
-        if(!this.state.isRunning){
+        if (!this.state.isRunning) {
             clearInterval(this.timer);
             this.setState({
                 min: 0,
@@ -137,7 +139,7 @@ class Stopwatch extends Component {
     };
 
     getStatusMessage() {
-        if(this.state.finish){
+        if (this.state.finish) {
             return "koniec wyścigu";
         }
         if (!this.state.finish && this.state.isRunning) {
@@ -148,21 +150,21 @@ class Stopwatch extends Component {
 
     renderDriver = (data, id) => {
         return (
-            <div key={id} className="driver">
-                <span>{id}: </span><span>joker: {this.renderJoker(data.getJoker())} </span>{data.times.map(this.renderTime)}
-            </div>
+            <tr key={id} className="driver">
+                <td>{++id}: </td><td>{this.renderJoker(data.getJoker())} </td>{data.times.map(this.renderTime)}
+            </tr>
         );
     };
 
     renderJoker = (state) => {
-        let clazzName = "joker " +  (state ? 'passed' : 'not-passed');
+        let clazzName = "joker " + (state ? 'passed' : 'not-passed');
         return (
             <i className={clazzName}>
             </i>
         );
     }
 
-    renderPrettyTime = (time)  => {
+    renderPrettyTime = (time) => {
         return (
             <>
                 {('0' + time.getMinutes()).slice(-2)}:
@@ -173,8 +175,18 @@ class Stopwatch extends Component {
     };
     renderTime = (data, id) => {
         return (
-            <span key={'t' + id} className="singleTime">{data ? this.renderPrettyTime(data) : "00:00:000"} </span>
+            <td key={'t' + id} className="singleTime">{data ? this.renderPrettyTime(data) : "00:00:000"} </td>
         );
+    };
+
+    renderLapHeader = () => {
+        let table = [];
+        for (let i = 0; i < this.config.laps; i++) {
+            table.push(<th>
+                okr. {i + 1}.
+            </th>);
+        }
+        return table;
     };
 
     render() {
@@ -189,9 +201,14 @@ class Stopwatch extends Component {
                     </div>
                     <p className="statusMessage">{statusMessage}</p>
                 </div>
-                <ul className="driversList">
+                <table className="driversList">
+                    <tr>
+                        <th>zawodnicy</th>
+                        <th>joker</th>
+                        {this.renderLapHeader()}
+                    </tr>
                     {this.state.drivers.map(this.renderDriver)}
-                </ul>
+                </table>
             </div>
         );
     }
