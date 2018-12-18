@@ -14,8 +14,8 @@ body {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    .statusMessage{
-        &--finished{
+    .statusMessage {
+        &--finished {
             color: #ff0000;
         }
     }
@@ -35,16 +35,23 @@ body {
             opacity: 1;
         }
     }
-    .timePlaceholder{
+    .timePlaceholder {
         opacity: 0.2;
     }
-    .prettyTime{
-        &.best{
+    .prettyTime {
+        &.best {
             color: #27a527;
         }
     }
+    .jokerPenalty {
+        color: #ff0000;
+        float: right;
+        margin-left:10px;
+        font-size: 12px;
+    }
 }
 
+$totalTimeBackgroundColor: #EEEEEE;
 table {
     border-spacing: 0;
     text-align: left;
@@ -54,12 +61,19 @@ table {
         .singleTime {
             min-width: 100px;
         }
+        &.totalTime {
+            min-width: 120px;
+            background-color: $totalTimeBackgroundColor;
+        }
     }
     th {
         padding: 5px;
         font-size: 10px;
-        &.timeHeader{
-            width:100px;
+        &.timeHeader {
+            width: 100px;
+        }
+        &.totalTimeHeader {
+            background-color: $totalTimeBackgroundColor;
         }
     }
 }

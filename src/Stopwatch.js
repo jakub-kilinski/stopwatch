@@ -170,18 +170,23 @@ class Stopwatch extends Component {
         }
         return "oczekiwanie na start";
     }
-    renderFullTime = (driver) => {
+    renderTotalTime = (driver) => {
         if (driver.getFinished()) {
-            let fullTime = 0;
+            let totalTime = 0;
             driver.times.map(function(time){
-                return fullTime += time.time.getTime();
+                return totalTime += time.time.getTime();
             });
             if(!driver.getJoker()){
-                fullTime += this.config.jokerPenaltyMilliseconds;
+                totalTime += this.config.jokerPenaltyMilliseconds;
+                return (
+                    <>
+                        {this.renderDigits(new Date(totalTime))} {this.renderPenaltyPlaceholder()}
+                    </>
+                );
             }
-            return this.renderDigits(new Date(fullTime));
+            return this.renderDigits(new Date(totalTime));
         }
-        return '00:00:000';
+        return Stopwatch.renderTimePlaceholder();
     };
 
     renderDriver = (data, id) => {
@@ -190,7 +195,7 @@ class Stopwatch extends Component {
                 <td>{++id}.</td>
                 <td>{this.renderJoker(data.getJoker())} </td>
                 {data.times.map(this.renderTime)}
-                <td>{this.renderFullTime(data)}</td>
+                <td className="totalTime">{this.renderTotalTime(data)}</td>
             </tr>
         );
     };
@@ -233,6 +238,14 @@ class Stopwatch extends Component {
         );
     };
 
+    renderPenaltyPlaceholder() {
+        return (
+            <span className="jokerPenalty">
+                (+{new Date(this.config.jokerPenaltyMilliseconds).getSeconds()}s)
+            </span>
+        )
+    }
+
     renderLapHeader = () => {
         let table = [];
         for (let i = 0; i < this.config.laps; i++) {
@@ -262,7 +275,7 @@ class Stopwatch extends Component {
                             <th>zawodnicy</th>
                             <th>joker</th>
                             {this.renderLapHeader()}
-                            <th>łączny czas</th>
+                            <th className="totalTimeHeader">łączny czas</th>
                         </tr>
 
                         {this.state.drivers.map(this.renderDriver)}
