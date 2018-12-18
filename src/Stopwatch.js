@@ -5,7 +5,7 @@ class Stopwatch extends Component {
     config = {
         numbersOfDrivers: 4,
         laps: 6,
-        jokerPenaltyMilliseconds: 40000
+        jokerPenaltyMilliseconds: 45000
     };
     KEYS = {
         n1: 49,
