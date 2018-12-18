@@ -4,7 +4,8 @@ import Driver from './Driver';
 class Stopwatch extends Component {
     config = {
         numbersOfDrivers: 4,
-        laps: 6
+        laps: 6,
+        jokerPenaltyMilliseconds: 40000
     };
     KEYS = {
         n1: 49,
@@ -93,7 +94,7 @@ class Stopwatch extends Component {
     };
 
     showBestTime() {
-        var bestTime = this.state.bestTime;
+        let bestTime = this.state.bestTime;
 
         this.state.drivers.map(function(driver){
             driver.times.map(function(time){
@@ -169,6 +170,19 @@ class Stopwatch extends Component {
         }
         return "oczekiwanie na start";
     }
+    renderFullTime = (driver) => {
+        if (driver.getFinished()) {
+            let fullTime = 0;
+            driver.times.map(function(time){
+                return fullTime += time.time.getTime();
+            });
+            if(!driver.getJoker()){
+                fullTime += this.config.jokerPenaltyMilliseconds;
+            }
+            return this.renderDigits(new Date(fullTime));
+        }
+        return '00:00:000';
+    };
 
     renderDriver = (data, id) => {
         return (
@@ -176,6 +190,7 @@ class Stopwatch extends Component {
                 <td>{++id}.</td>
                 <td>{this.renderJoker(data.getJoker())} </td>
                 {data.times.map(this.renderTime)}
+                <td>{this.renderFullTime(data)}</td>
             </tr>
         );
     };
@@ -187,15 +202,21 @@ class Stopwatch extends Component {
             </i>
         );
     };
-
     renderPrettyTime = (time) => {
         let clazzName = 'prettyTime' + (time.best ? " best" : "");
         return (
             <span className={clazzName}>
-                {('0' + time.time.getMinutes()).slice(-2)}:
-                {('0' + time.time.getSeconds()).slice(-2)}:
-                {('00' + time.time.getMilliseconds()).slice(-3)}
+                {this.renderDigits(time.time)}
             </span>
+        );
+    };
+    renderDigits = (time) => {
+        return (
+            <>
+                {('0' + time.getMinutes()).slice(-2)}:
+                {('0' + time.getSeconds()).slice(-2)}:
+                {('00' + time.getMilliseconds()).slice(-3)}
+            </>
         );
     };
     renderTime = (data, id) => {
@@ -241,6 +262,7 @@ class Stopwatch extends Component {
                             <th>zawodnicy</th>
                             <th>joker</th>
                             {this.renderLapHeader()}
+                            <th>łączny czas</th>
                         </tr>
 
                         {this.state.drivers.map(this.renderDriver)}
