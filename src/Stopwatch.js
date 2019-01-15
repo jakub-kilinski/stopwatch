@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import Driver from './Driver';
 
+
 class Stopwatch extends Component {
     config = {
         numbersOfDrivers: 4,
@@ -20,8 +21,8 @@ class Stopwatch extends Component {
         start: 13
     };
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             drivers: this.initializeDriversAndTimeTable(),
             finish: false,
@@ -31,7 +32,8 @@ class Stopwatch extends Component {
             min: 0,
             sec: 0,
             ms: 0,
-            bestTime: 0
+            bestTime: 0,
+            settings: props.settings
         }
     }
 
@@ -119,6 +121,7 @@ class Stopwatch extends Component {
     };
     recognizeKey = (event) => {
         let keyCode = event.keyCode;
+        console.log(this.state.settings);
         if (keyCode === this.KEYS.start && !this.state.finish) {
             this.runTimer();
         } else if (keyCode === this.KEYS.x) {
