@@ -39,9 +39,9 @@ class SettingsPanel extends Component {
         return (
             <span key={index}>
                 Driver {index + 1}
-                <br/>Lap button: <input type="text" placeholder={driver.lapButton} data-buttontype="lap"
+                <br/>Lap button: <input type="text" className="settingsInput" placeholder={driver.lapButton} data-buttontype="lap"
                                         data-drivernumber={index} onFocus={this.onFocusChangeKey}/>,
-                Joker button: <input type="text" data-buttontype="joker" data-drivernumber={index}
+                Joker button: <input type="text" className="settingsInput" data-buttontype="joker" data-drivernumber={index}
                                      placeholder={driver.jokerButton}  onFocus={this.onFocusChangeKey}/><br/>
             </span>);
     };
@@ -50,9 +50,9 @@ class SettingsPanel extends Component {
         return (
             <div>
                 <p>{this.props.settings.drivers.map(this.renderEditButton)}</p>
-                <p>Reset button: <input type="text" placeholder={this.props.settings.resetButton} data-buttontype="reset"
+                <p>Reset button: <input type="text" className="settingsInput" placeholder={this.props.settings.resetButton} data-buttontype="reset"
                                         onFocus={this.onFocusChangeKey}/></p>
-                <p>Start button: <input type="text" placeholder={this.props.settings.startButton} data-buttontype="start"
+                <p>Start button: <input type="text" className="settingsInput" placeholder={this.props.settings.startButton} data-buttontype="start"
                                         onFocus={this.onFocusChangeKey}/></p>
             </div>
         );
@@ -63,9 +63,14 @@ class SettingsPanel extends Component {
             <div>
                 {this.renderDriversSettings()}
                 {this.renderRaceConfiguration()}
+
             </div>
         );
     }
+}
+
+class Configuration extends Component {
+
 }
 
 export default SettingsPanel;

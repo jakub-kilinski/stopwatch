@@ -77,3 +77,23 @@ table {
         }
     }
 }
+
+.settingsInput{
+    width:70px;
+}
+
+.configurationWrapper{
+    display: flex;
+    justify-content: space-evenly;
+    .singleConfigurationWrapper{
+        display: flex;
+
+        input{
+            width:40px;
+        }
+        .editButton{
+            display: inline-block;
+            background-color: #27a527;
+        }
+    }
+}

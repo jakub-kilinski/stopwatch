@@ -3,6 +3,7 @@ import './App.scss';
 import Stopwatch from './Stopwatch';
 import SettingsPanel from "./SettingsPanel";
 import Driver from "./Driver";
+import Configuration from "./Configuration";
 
 class App extends Component {
     constructor() {
@@ -107,6 +108,7 @@ class App extends Component {
                     updateConfiguration={this.updateConfiguration}
                     updateKeyConfiguration={this.updateKeyConfiguration}
                 />
+                <Configuration/>
             </>
         );
     }
