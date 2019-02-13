@@ -3,24 +3,6 @@ import Driver from './Driver';
 
 
 class Stopwatch extends Component {
-    config = {
-        numbersOfDrivers: 4,
-        laps: 6,
-        jokerPenaltyMilliseconds: 45000
-    };
-    KEYS = {
-        n1: 49,
-        n2: 50,
-        n3: 51,
-        n4: 52,
-        q: 81,
-        w: 87,
-        e: 69,
-        r: 82,
-        x: 88,
-        start: 13
-    };
-
     constructor(props) {
         super(props);
         this.state = {
@@ -32,19 +14,18 @@ class Stopwatch extends Component {
             min: 0,
             sec: 0,
             ms: 0,
-            bestTime: 0,
-            settings: props.settings
+            bestTime: 0
         }
     }
 
     componentDidMount() {
-        document.body.addEventListener('keydown', this.recognizeKey);
+        document.body.addEventListener('keydown', this.recognizeKey.bind(this));
     };
 
     initializeDriversAndTimeTable() {
         let driver = [];
-        for (let i = 0; i < this.config.numbersOfDrivers; i++) {
-            driver.push(new Driver(this.config.laps));
+        for (let i = 0; i < this.props.configuration.driversNumber; i++) {
+            driver.push(new Driver(this.props.configuration.lapsNumber));
         }
         return driver;
     };
@@ -72,7 +53,7 @@ class Stopwatch extends Component {
     };
     saveLapTime = (driverNumber) => {
         let driver = this.state.drivers[driverNumber];
-        if (driver.currentLap < this.config.laps) {
+        if (driver.currentLap < this.props.configuration.lapsNumber) {
             let time = driver.getStartLapTime()
                 ? new Date(Date.now() - driver.getStartLapTime())
                 : new Date(Date.now() - this.state.startTime);
@@ -83,7 +64,7 @@ class Stopwatch extends Component {
                 });
             }
         }
-        if (driver.currentLap === this.config.laps) {
+        if (driver.currentLap === this.props.configuration.lapsNumber) {
             driver.setFinished();
         }
         if (this.isFinished()) {
@@ -98,9 +79,9 @@ class Stopwatch extends Component {
     showBestTime() {
         let bestTime = this.state.bestTime;
 
-        this.state.drivers.map(function(driver){
-            driver.times.map(function(time){
-                if(time.time === bestTime){
+        this.state.drivers.map(function (driver) {
+            driver.times.map(function (time) {
+                if (time.time === bestTime) {
                     time.best = true;
                 }
                 return time;
@@ -117,32 +98,34 @@ class Stopwatch extends Component {
 
     setJokerLap = (driverNumber) => {
         let driver = this.state.drivers[driverNumber];
-        driver.setJoker();
+        if(!driver.getFinished()){
+            driver.setJoker();
+        }
     };
     recognizeKey = (event) => {
-        let keyCode = event.keyCode;
+        let keyCode = event.code;
         console.log(this.state.settings);
-        if (keyCode === this.KEYS.start && !this.state.finish) {
+        if (keyCode === this.props.settings.startButton && !this.state.finish) {
             this.runTimer();
-        } else if (keyCode === this.KEYS.x) {
+        } else if (keyCode === this.props.settings.resetButton) {
             this.handleReset();
         }
         if (this.state.isRunning && !this.state.finish) {
-            if (keyCode === this.KEYS.n1 && this.config.numbersOfDrivers >= 1) {
+            if (keyCode === this.props.settings.drivers[0].lapButton && this.props.configuration.driversNumber >= 1) {
                 this.saveLapTime(0);
-            } else if (keyCode === this.KEYS.n2 && this.config.numbersOfDrivers >= 2) {
+            } else if (keyCode === this.props.settings.drivers[1].lapButton && this.props.configuration.driversNumber >= 2) {
                 this.saveLapTime(1);
-            } else if (keyCode === this.KEYS.n3 && this.config.numbersOfDrivers >= 3) {
+            } else if (keyCode === this.props.settings.drivers[2].lapButton && this.props.configuration.driversNumber >= 3) {
                 this.saveLapTime(2);
-            } else if (keyCode === this.KEYS.n4 && this.config.numbersOfDrivers >= 4) {
+            } else if (keyCode === this.props.settings.drivers[3].lapButton && this.props.configuration.driversNumber >= 4) {
                 this.saveLapTime(3);
-            } else if (keyCode === this.KEYS.q && this.config.numbersOfDrivers >= 1) {
+            } else if (keyCode === this.props.settings.drivers[0].jokerButton && this.props.configuration.driversNumber >= 1) {
                 this.setJokerLap(0);
-            } else if (keyCode === this.KEYS.w && this.config.numbersOfDrivers >= 2) {
+            } else if (keyCode === this.props.settings.drivers[1].jokerButton && this.props.configuration.driversNumber >= 2) {
                 this.setJokerLap(1);
-            } else if (keyCode === this.KEYS.e && this.config.numbersOfDrivers >= 3) {
+            } else if (keyCode === this.props.settings.drivers[2].jokerButton && this.props.configuration.driversNumber >= 3) {
                 this.setJokerLap(2);
-            } else if (keyCode === this.KEYS.r && this.config.numbersOfDrivers >= 4) {
+            } else if (keyCode === this.props.settings.drivers[3].jokerButton && this.props.configuration.driversNumber >= 4) {
                 this.setJokerLap(3);
             }
         }
@@ -173,14 +156,15 @@ class Stopwatch extends Component {
         }
         return "oczekiwanie na start";
     }
+
     renderTotalTime = (driver) => {
         if (driver.getFinished()) {
             let totalTime = 0;
-            driver.times.map(function(time){
+            driver.times.map(function (time) {
                 return totalTime += time.time.getTime();
             });
-            if(!driver.getJoker()){
-                totalTime += this.config.jokerPenaltyMilliseconds;
+            if (!driver.getJoker()) {
+                totalTime += this.props.configuration.jokerPenaltyMilliseconds;
                 return (
                     <>
                         {this.renderDigits(new Date(totalTime))} {this.renderPenaltyPlaceholder()}
@@ -229,7 +213,8 @@ class Stopwatch extends Component {
     };
     renderTime = (data, id) => {
         return (
-            <td key={'t' + id} className="singleTime">{data.time ? this.renderPrettyTime(data) : Stopwatch.renderTimePlaceholder()} </td>
+            <td key={'t' + id}
+                className="singleTime">{data.time ? this.renderPrettyTime(data) : Stopwatch.renderTimePlaceholder()} </td>
         );
     };
 
@@ -244,14 +229,14 @@ class Stopwatch extends Component {
     renderPenaltyPlaceholder() {
         return (
             <span className="jokerPenalty">
-                (+{new Date(this.config.jokerPenaltyMilliseconds).getSeconds()}s)
+                (+{new Date(this.props.configuration.jokerPenaltyMilliseconds).getSeconds()}s)
             </span>
         )
     }
 
     renderLapHeader = () => {
         let table = [];
-        for (let i = 0; i < this.config.laps; i++) {
+        for (let i = 0; i < this.props.configuration.lapsNumber; i++) {
             table.push(<th className="timeHeader" key={'th' + i}>
                 okr. {i + 1}.
             </th>);
@@ -274,14 +259,14 @@ class Stopwatch extends Component {
                 </div>
                 <table className="driversList">
                     <tbody>
-                        <tr>
-                            <th>zawodnicy</th>
-                            <th>joker</th>
-                            {this.renderLapHeader()}
-                            <th className="totalTimeHeader">łączny czas</th>
-                        </tr>
+                    <tr>
+                        <th>zawodnicy</th>
+                        <th>joker</th>
+                        {this.renderLapHeader()}
+                        <th className="totalTimeHeader">łączny czas</th>
+                    </tr>
 
-                        {this.state.drivers.map(this.renderDriver)}
+                    {this.state.drivers.map(this.renderDriver)}
                     </tbody>
                 </table>
             </div>

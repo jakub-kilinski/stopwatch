@@ -11,6 +11,7 @@ class Driver {
 
     static initTimes(numberOfLaps) {
         let times = [];
+        times.length = 0;
         for (let j = 0; j < numberOfLaps; j++) {
             times.push({time: 0, best: false});
         }
