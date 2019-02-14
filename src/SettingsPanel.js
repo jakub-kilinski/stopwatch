@@ -9,13 +9,11 @@ class SettingsPanel extends Component {
     onFocusChangeKey = (event) => {
         let currentElement = event.currentTarget;
         let dataSet = currentElement.dataset;
-        console.log(event);
         currentElement.onkeydown = this.onKeyDownChangeKeyConfiguration.bind(null, currentElement, dataSet, this.props);
     };
 
     onKeyDownChangeKeyConfiguration(currentElement, dataSet, props, event){
         event.preventDefault();
-        console.log(event);
         currentElement.blur();
         props.updateKeyConfiguration(dataSet, event.code)
     };
@@ -67,10 +65,6 @@ class SettingsPanel extends Component {
             </div>
         );
     }
-}
-
-class Configuration extends Component {
-
 }
 
 export default SettingsPanel;

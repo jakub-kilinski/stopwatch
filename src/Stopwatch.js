@@ -22,6 +22,12 @@ class Stopwatch extends Component {
         document.body.addEventListener('keydown', this.recognizeKey.bind(this));
     };
 
+    componentWillReceiveProps() {
+        this.setState({
+            drivers: this.initializeDriversAndTimeTable()
+        });
+    };
+
     initializeDriversAndTimeTable() {
         let driver = [];
         for (let i = 0; i < this.props.configuration.driversNumber; i++) {
@@ -104,7 +110,6 @@ class Stopwatch extends Component {
     };
     recognizeKey = (event) => {
         let keyCode = event.code;
-        console.log(this.state.settings);
         if (keyCode === this.props.settings.startButton && !this.state.finish) {
             this.runTimer();
         } else if (keyCode === this.props.settings.resetButton) {

@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import './App.scss';
 import Stopwatch from './Stopwatch';
 import SettingsPanel from "./SettingsPanel";
-import Driver from "./Driver";
 import Configuration from "./Configuration";
 
 class App extends Component {
@@ -44,31 +43,17 @@ class App extends Component {
                 "driversNumber": 3,
                 "jokerPenaltyMilliseconds": 45000
             },
-            "drivers": {}
-        }
-    };
-
-    componentDidMount() {
-        this.setState({
-            drivers: this.initializeDriversAndTimeTable()
-        });
-    };
-
-    initializeDriversAndTimeTable() {
-        let driver = [];
-        for (let i = 0; i < this.state.configuration.driversNumber; i++) {
-            driver.push(new Driver(this.state.configuration.lapsNumber));
-        }
-        return driver;
+        };
+        this.stopwatch = React.createRef();
+        this.updateConfiguration = this.updateConfiguration.bind(this);
     };
 
     updateConfiguration = (option, value) => {
         let configuration = Object.assign({}, this.state.configuration);
         configuration[option] = Number(value);
         this.setState({
-            configuration: configuration,
-            drivers: this.initializeDriversAndTimeTable()
-        });
+            configuration: configuration
+        }, this.stopwatch.current.handleReset());
     };
 
     updateKeyConfiguration = (dataSet, newKey) => {
@@ -98,6 +83,7 @@ class App extends Component {
             <>
                 <div className="container">
                     <Stopwatch
+                        ref={this.stopwatch}
                         settings={this.state.settings}
                         configuration={this.state.configuration}
                     />
@@ -108,7 +94,10 @@ class App extends Component {
                     updateConfiguration={this.updateConfiguration}
                     updateKeyConfiguration={this.updateKeyConfiguration}
                 />
-                <Configuration/>
+                <Configuration
+                    updateConfiguration={this.updateConfiguration}
+                    configuration={this.state.configuration}
+                />
             </>
         );
     }

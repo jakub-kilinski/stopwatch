@@ -85,15 +85,37 @@ table {
 .configurationWrapper{
     display: flex;
     justify-content: space-evenly;
+    min-height:100px;
     .singleConfigurationWrapper{
         display: flex;
+        flex-direction: column;
+        .inputWrapper{
+            display: flex;
+            justify-content: center;
+            input{
+                width:40px;
+            }
+            .button{
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                text-align: center;
+                font-size: 10px;
+                width:40px;
+                cursor: pointer;
+                color: #ffffff;
+                &:hover{
+                    opacity: 0.7;
+                }
+                &.editButton{
+                    background-color: #0072a5;
+                }
+                &.saveButton{
+                    background-color: #27a527;
+                }
+            }
 
-        input{
-            width:40px;
         }
-        .editButton{
-            display: inline-block;
-            background-color: #27a527;
-        }
+
     }
 }
