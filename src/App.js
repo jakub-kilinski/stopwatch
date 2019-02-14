@@ -1,4 +1,7 @@
 import React, {Component} from 'react';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCogs } from '@fortawesome/free-solid-svg-icons';
 import './App.scss';
 import Stopwatch from './Stopwatch';
 import SettingsPanel from "./SettingsPanel";
@@ -7,7 +10,18 @@ import Configuration from "./Configuration";
 class App extends Component {
     constructor() {
         super();
-        this.state = {
+        this.state = this.initializeState();
+        this.stopwatch = React.createRef();
+        this.updateConfiguration = this.updateConfiguration.bind(this);
+        library.add(faCogs);
+    };
+
+    componentDidUpdate() {
+        localStorage.setItem("state", JSON.stringify(this.state));
+    };
+
+    initializeState() {
+        let defaultState = {
             "settings": {
                 "drivers": [
                     {
@@ -43,17 +57,21 @@ class App extends Component {
                 "driversNumber": 3,
                 "jokerPenaltyMilliseconds": 45000
             },
+            "isActiveConfigurationPanel" : false
         };
-        this.stopwatch = React.createRef();
-        this.updateConfiguration = this.updateConfiguration.bind(this);
-    };
+
+        if(localStorage.getItem("state") === null) {
+            return defaultState;
+        }
+        return JSON.parse(localStorage.getItem("state"));
+    }
 
     updateConfiguration = (option, value) => {
         let configuration = Object.assign({}, this.state.configuration);
         configuration[option] = Number(value);
         this.setState({
             configuration: configuration
-        }, this.stopwatch.current.handleReset());
+        });
     };
 
     updateKeyConfiguration = (dataSet, newKey) => {
@@ -78,7 +96,15 @@ class App extends Component {
         });
     };
 
+    showConfigurationPanel = () => {
+        this.setState({
+            isActiveConfigurationPanel : !this.state.isActiveConfigurationPanel
+        });
+    };
+
     render() {
+        let configurationPanelclazz = "configurationPanel " + (this.state.isActiveConfigurationPanel ? "active" : "");
+        let configBoxclazz = "configBox " + (this.state.isActiveConfigurationPanel ? "active" : "");
         return (
             <>
                 <div className="container">
@@ -88,16 +114,21 @@ class App extends Component {
                         configuration={this.state.configuration}
                     />
                 </div>
-                <SettingsPanel
-                    settings={this.state.settings}
-                    configuration={this.state.configuration}
-                    updateConfiguration={this.updateConfiguration}
-                    updateKeyConfiguration={this.updateKeyConfiguration}
-                />
-                <Configuration
-                    updateConfiguration={this.updateConfiguration}
-                    configuration={this.state.configuration}
-                />
+                <div className={configurationPanelclazz}>
+                    <SettingsPanel
+                        settings={this.state.settings}
+                        configuration={this.state.configuration}
+                        updateConfiguration={this.updateConfiguration}
+                        updateKeyConfiguration={this.updateKeyConfiguration}
+                    />
+                    <Configuration
+                        updateConfiguration={this.updateConfiguration}
+                        configuration={this.state.configuration}
+                    />
+                </div>
+                <div className={configBoxclazz} onClick={this.showConfigurationPanel}>
+                    <FontAwesomeIcon icon="cogs" />
+                </div>
             </>
         );
     }

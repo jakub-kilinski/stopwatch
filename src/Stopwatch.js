@@ -6,7 +6,7 @@ class Stopwatch extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            drivers: this.initializeDriversAndTimeTable(),
+            drivers: Stopwatch.initializeDriversAndTimeTable(this.props),
             finish: false,
             isRunning: false,
             startTime: 0,
@@ -22,16 +22,16 @@ class Stopwatch extends Component {
         document.body.addEventListener('keydown', this.recognizeKey.bind(this));
     };
 
-    componentWillReceiveProps() {
+    componentWillReceiveProps(props) {
         this.setState({
-            drivers: this.initializeDriversAndTimeTable()
+            drivers: Stopwatch.initializeDriversAndTimeTable(props)
         });
     };
 
-    initializeDriversAndTimeTable() {
+    static initializeDriversAndTimeTable(props) {
         let driver = [];
-        for (let i = 0; i < this.props.configuration.driversNumber; i++) {
-            driver.push(new Driver(this.props.configuration.lapsNumber));
+        for (let i = 0; i < props.configuration.driversNumber; i++) {
+            driver.push(new Driver(props.configuration.lapsNumber));
         }
         return driver;
     };
@@ -145,7 +145,7 @@ class Stopwatch extends Component {
                 isRunning: false,
                 startTime: 0,
                 runningTime: 0,
-                drivers: this.initializeDriversAndTimeTable(),
+                drivers: Stopwatch.initializeDriversAndTimeTable(this.props),
                 finish: false,
                 bestTime: 0
             });

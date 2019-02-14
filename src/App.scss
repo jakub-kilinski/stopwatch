@@ -46,7 +46,7 @@ body {
     .jokerPenalty {
         color: #ff0000;
         float: right;
-        margin-left:10px;
+        margin-left: 10px;
         font-size: 12px;
     }
 }
@@ -78,44 +78,100 @@ table {
     }
 }
 
-.settingsInput{
-    width:70px;
+.settingsInput {
+    width: 70px;
 }
 
-.configurationWrapper{
+.configurationPanel {
+    transition: 1s;
+    transition-timing-function: ease-out;
+    width: 600px;
     display: flex;
-    justify-content: space-evenly;
-    min-height:100px;
-    .singleConfigurationWrapper{
+    position:absolute;
+    left: -601px;
+    flex-direction: column;
+    flex-wrap: wrap;
+    border: 1px solid #000000;
+    &.active{
+        left: 0;
+    }
+    .driverConfigWrapper {
         display: flex;
+        flex: 50%;
+        width:50%;
+        float:left;
         flex-direction: column;
-        .inputWrapper{
-            display: flex;
-            justify-content: center;
-            input{
-                width:40px;
+        margin-bottom: 10px;
+        justify-content: center;
+        .driverHeader {
+            width:100%;
+        }
+        .driverInputs{
+            div{
+                margin: 5px;
             }
-            .button{
-                display: flex;
-                justify-content: center;
-                flex-direction: column;
-                text-align: center;
-                font-size: 10px;
-                width:40px;
-                cursor: pointer;
-                color: #ffffff;
-                &:hover{
-                    opacity: 0.7;
-                }
-                &.editButton{
-                    background-color: #0072a5;
-                }
-                &.saveButton{
-                    background-color: #27a527;
-                }
+            .lapInput{
+                margin-left: 14px;
             }
 
         }
+    }
+    .configurationWrapper {
+        display: flex;
+        justify-content: space-evenly;
+        min-height: 100px;
+        .singleConfigurationWrapper {
+            display: flex;
+            flex-direction: column;
+            .inputWrapper {
+                display: flex;
+                justify-content: center;
+                input {
+                    width: 40px;
+                }
+                .button {
+                    display: flex;
+                    justify-content: center;
+                    flex-direction: column;
+                    text-align: center;
+                    font-size: 10px;
+                    width: 40px;
+                    cursor: pointer;
+                    color: #ffffff;
+                    &:hover {
+                        opacity: 0.7;
+                    }
+                    &.editButton {
+                        background-color: #0072a5;
+                    }
+                    &.saveButton {
+                        background-color: #27a527;
+                    }
+                }
 
+            }
+
+        }
+    }
+}
+.configBox{
+    transition: 1s;
+    transition-timing-function: ease-out;
+    position: absolute;
+    width:50px;
+    height:50px;
+    text-align: center;
+    font-size:30px;
+    border: 1px solid #000000;
+    line-height: 50px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-left-color: #ffffff;
+    left:0;
+    svg{
+        vertical-align: middle;
+    }
+    &.active{
+        left: 601px;
     }
 }
