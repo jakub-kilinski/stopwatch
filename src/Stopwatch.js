@@ -23,9 +23,9 @@ class Stopwatch extends Component {
     };
 
     componentWillReceiveProps(props) {
-        this.setState({
-            drivers: Stopwatch.initializeDriversAndTimeTable(props)
-        });
+        if(JSON.stringify(this.props) !== JSON.stringify(props)){
+            this.handleReset(props);
+        }
     };
 
     static initializeDriversAndTimeTable(props) {
@@ -113,7 +113,7 @@ class Stopwatch extends Component {
         if (keyCode === this.props.settings.startButton && !this.state.finish) {
             this.runTimer();
         } else if (keyCode === this.props.settings.resetButton) {
-            this.handleReset();
+            this.handleReset(this.props);
         }
         if (this.state.isRunning && !this.state.finish) {
             if (keyCode === this.props.settings.drivers[0].lapButton && this.props.configuration.driversNumber >= 1) {
@@ -135,7 +135,7 @@ class Stopwatch extends Component {
             }
         }
     };
-    handleReset = () => {
+    handleReset = (props) => {
         if (!this.state.isRunning) {
             clearInterval(this.timer);
             this.setState({
@@ -145,7 +145,7 @@ class Stopwatch extends Component {
                 isRunning: false,
                 startTime: 0,
                 runningTime: 0,
-                drivers: Stopwatch.initializeDriversAndTimeTable(this.props),
+                drivers: Stopwatch.initializeDriversAndTimeTable(props),
                 finish: false,
                 bestTime: 0
             });
